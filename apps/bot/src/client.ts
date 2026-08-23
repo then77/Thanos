@@ -1,5 +1,6 @@
-import { Client, type ClientOptions } from "discord.js";
+import { Client, Collection, type ClientOptions } from "discord.js";
 import { createLogger, type Logger } from "@thanos/logger";
+import type { ExecutableApplicationCommand } from "@/lib/commands";
 
 export class BotClient extends Client {
     /**
@@ -12,6 +13,9 @@ export class BotClient extends Client {
      * ```
      */
     public readonly logger: Logger;
+
+    /** Loaded commands */
+    public readonly commands = new Collection<string, ExecutableApplicationCommand>();
 
     constructor(options: ClientOptions) {
         super(options);

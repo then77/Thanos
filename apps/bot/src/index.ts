@@ -1,5 +1,6 @@
 import { GatewayIntentBits } from "discord.js";
 import { BotClient } from "@/client";
+import { loadCommands } from "@/lib/commands";
 
 const client = new BotClient({
     intents: [
@@ -12,7 +13,7 @@ const client = new BotClient({
     ],
 });
 
-// Add handling on abnormal error
+/** Add handling on abnormal error */
 process.on("uncaughtException", (error) => {
     client.logger.fatal(error, "Uncaught exception");
 });
@@ -27,4 +28,11 @@ process.on("unhandledRejection", (reason) => {
 if (!Bun.env.DISCORD_TOKEN) {
     throw new Error("DISCORD_TOKEN is not set yet.");
 }
+
+/** Load all commands */
+const { commands } = await loadCommands(new URL("./commands", import.meta.url));
+for (const command of commands.values()) {
+    client.commands.set(command.data.toJSON().name, command);
+}
+
 await client.login(Bun.env.DISCORD_TOKEN);
