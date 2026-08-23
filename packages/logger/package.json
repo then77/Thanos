@@ -1,16 +1,18 @@
 {
-  "name": "bot",
-  "module": "index.ts",
+  "name": "@thanos/logger",
+  "module": "src/index.ts",
   "type": "module",
-  "private": true,
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^7"
   },
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "dependencies": {
-    "@thanos/logger": "workspace:*",
-    "discord.js": "^14.27.0"
+    "chalk": "^6.0.0",
+    "pino": "^10.3.1"
   }
 }
