@@ -1,15 +1,26 @@
 {
   "name": "project-thanos",
-  "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "start": "turbo run start",
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "preinstall": "npx only-allow bun"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "^1.4.0",
+    "turbo": "^2.10.12"
   },
   "peerDependencies": {
+    "prettier": "^3.9.6",
     "typescript": "^7"
   },
-  "workspaces": {
-      "packages": ["apps/*", "packages/*"]
-  }
+  "packageManager": "bun@1.4.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }
