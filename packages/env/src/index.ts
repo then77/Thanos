@@ -6,8 +6,11 @@ export const env = createEnv({
     // Database
     DATABASE_URL: z.url(),
 
+    // Better Auth
+    BETTER_AUTH_SECRET: z.string(),
+
     // Discord
-    DISCORD_TOKEN: z.string(),
+    // DISCORD_TOKEN: z.string(),
   },
   runtimeEnv: process.env,
 });
