@@ -1,17 +1,18 @@
 {
-  "name": "bot",
-  "module": "index.ts",
+  "name": "@thanos/env",
+  "module": "src/index.ts",
   "type": "module",
-  "private": true,
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^7"
   },
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "dependencies": {
-    "@thanos/env": "*",
-    "@thanos/logger": "*",
-    "discord.js": "^14.27.0"
+    "@t3-oss/env-core": "^0.13.11",
+    "zod": "^4.5.4"
   }
 }

@@ -23,8 +23,22 @@
     "apps/bot": {
       "name": "bot",
       "dependencies": {
-        "@thanos/logger": "workspace:*",
+        "@thanos/env": "*",
+        "@thanos/logger": "*",
         "discord.js": "^14.27.0",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+      "peerDependencies": {
+        "typescript": "^7",
+      },
+    },
+    "packages/env": {
+      "name": "@thanos/env",
+      "dependencies": {
+        "@t3-oss/env-core": "^0.13.11",
+        "zod": "^4.5.4",
       },
       "devDependencies": {
         "@types/bun": "latest",
@@ -297,6 +311,10 @@
     "@shikijs/types": ["@shikijs/types@4.4.3", "", { "dependencies": { "@shikijs/vscode-textmate": "^10.0.2", "@types/hast": "^3.0.5" } }, "sha512-UEJxmRR++MAGR6hugn0vgVS2W/6lWAts84FFSrnlH9sP0LNol7E5+NQ792pH8liWUhyMyjhTgSUH3k7iD7tc5g=="],
 
     "@shikijs/vscode-textmate": ["@shikijs/vscode-textmate@10.0.2", "", {}, "sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg=="],
+
+    "@t3-oss/env-core": ["@t3-oss/env-core@0.13.11", "", { "peerDependencies": { "arktype": "^2.1.0", "typescript": ">=5.0.0", "valibot": "^1.0.0-beta.7 || ^1.0.0", "zod": "^3.24.0 || ^4.0.0" }, "optionalPeers": ["arktype", "typescript", "valibot", "zod"] }, "sha512-sM7GYY+KL7H/Hl0BE0inWfk3nRHZOLhmVn7sHGxaZt9FAR6KqREXAE+6TqKfiavfXmpRxO/OZ2QgKRd+oiBYRQ=="],
+
+    "@thanos/env": ["@thanos/env@workspace:packages/env"],
 
     "@thanos/logger": ["@thanos/logger@workspace:packages/logger"],
 
