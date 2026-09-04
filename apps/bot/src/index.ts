@@ -2,8 +2,9 @@ import { GatewayIntentBits } from "discord.js";
 import { BotClient } from "@/client";
 import { loadCommands } from "@/lib/commands";
 import { env } from "@thanos/env";
+import { app as backendApp } from "./backend";
 
-const client = new BotClient({
+export const client = new BotClient({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
@@ -37,3 +38,8 @@ for (const command of commands.values()) {
 }
 
 await client.login(Bun.env.DISCORD_TOKEN);
+
+export default {
+  fetch: backendApp.fetch,
+  port: 3000,
+};

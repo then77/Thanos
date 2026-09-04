@@ -3,15 +3,23 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "dev": "bun --env-file=../../.env run --bun --hot ./src/index.ts"
+  },
+  "dependencies": {
+    "@hono/standard-validator": "^0.4.0",
+    "@hono/zod-openapi": "^1.6.1",
+    "@thanos/env": "*",
+    "@thanos/logger": "*",
+    "discord.js": "^14.27.0",
+    "hono": "^4.13.5",
+    "hono-openapi": "^1.3.1",
+    "hono-rate-limiter": "^0.5.3"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^7"
-  },
-  "dependencies": {
-    "@thanos/env": "*",
-    "@thanos/logger": "*",
-    "discord.js": "^14.27.0"
   }
 }
