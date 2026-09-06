@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { rateLimiter } from "hono-rate-limiter";
+import { config } from "@thanos/constants";
 
 export const app = new Hono();
 
@@ -13,4 +14,11 @@ app.use(
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
+});
+
+app.get("/config", (c) => {
+  return c.json({
+    ...config,
+    updatedAt: new Date().toISOString(),
+  });
 });

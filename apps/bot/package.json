@@ -4,11 +4,13 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun --env-file=../../.env run --bun --hot ./src/index.ts"
+    "dev": "bun --env-file=../../.env run --bun --hot ./src/index.ts",
+    "reset-global-commands": "bun --env-file=../../.env run --bun ./src/scripts/reset-global-commands.ts"
   },
   "dependencies": {
     "@hono/standard-validator": "^0.4.0",
     "@hono/zod-openapi": "^1.6.1",
+    "@thanos/constants": "*",
     "@thanos/env": "*",
     "@thanos/logger": "*",
     "discord.js": "^14.27.0",

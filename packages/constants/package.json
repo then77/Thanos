@@ -1,0 +1,20 @@
+{
+  "name": "@thanos/constants",
+  "module": "src/index.ts",
+  "type": "module",
+  "dependencies": {
+    "@thanos/env": "*",
+    "@thanos/logger": "*",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.1",
+    "@types/node": "^26.4.1"
+  },
+  "peerDependencies": {
+    "typescript": "^7"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

@@ -9,7 +9,8 @@ export const env = createEnv({
     // Better Auth
     BETTER_AUTH_SECRET: z.string(),
 
-    // Discord
+    // Discord Bot
+    DISCORD_ID: z.string(),
     DISCORD_TOKEN: z.string(),
   },
   runtimeEnv: process.env,
