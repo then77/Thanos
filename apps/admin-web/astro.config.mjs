@@ -6,11 +6,42 @@ import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
 import svelte from "@astrojs/svelte";
 
+import mdx from "@astrojs/mdx";
+import { unified } from "@astrojs/markdown-remark";
+import {
+  rehypeCode,
+  remarkCodeTab,
+  remarkHeading,
+  remarkNpm,
+  remarkStructure,
+} from "fumadocs-core/mdx-plugins";
+
+const remarkPlugins = [
+  remarkHeading,
+  remarkCodeTab,
+  remarkNpm,
+  [remarkStructure, { exportAs: "structuredData" }],
+];
+const rehypePlugins = [rehypeCode];
+
 // https://astro.build/config
 export default defineConfig({
   adapter: cloudflare(),
-  integrations: [react(), svelte()],
-
+  integrations: [
+    react(),
+    svelte(),
+    mdx({
+      extendMarkdownConfig: true,
+      syntaxHighlight: false,
+    }),
+  ],
+  markdown: {
+    processor: unified({
+      syntaxHighlight: false,
+      remarkPlugins,
+      rehypePlugins,
+    }),
+  },
   vite: {
     plugins: [tailwindcss()],
   },
