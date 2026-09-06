@@ -1,8 +1,9 @@
-import { Hono } from "hono";
 import { rateLimiter } from "hono-rate-limiter";
-import { config } from "@thanos/constants";
+import { HonoBase } from "./app";
+import { type RouterRoutes, router } from "./routes";
 
-export const app = new Hono();
+export const app = new HonoBase();
+export type AppType = typeof app;
 
 app.use(
   rateLimiter({
@@ -12,13 +13,5 @@ app.use(
   }),
 );
 
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
-
-app.get("/config", (c) => {
-  return c.json({
-    ...config,
-    updatedAt: new Date().toISOString(),
-  });
-});
+export { router };
+app.route("/", router);

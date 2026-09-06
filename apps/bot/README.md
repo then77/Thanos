@@ -1,4 +1,4 @@
-# bot
+# @thanos/bot
 
 To install dependencies:
 

@@ -1,5 +1,5 @@
 {
-  "name": "bot",
+  "name": "@thanos/bot",
   "module": "index.ts",
   "type": "module",
   "private": true,
@@ -23,5 +23,8 @@
   },
   "peerDependencies": {
     "typescript": "^7"
+  },
+  "exports": {
+    ".": "./src/backend/index.ts"
   }
 }
