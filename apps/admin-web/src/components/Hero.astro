@@ -1,3 +1,45 @@
-<main>
-  <p class="font-lora">hello world!</p>
+---
+import ColorBends from "./ColorBends";
+import HeroRotating from "./HeroRotating";
+---
+
+<main class="flex flex-col">
+  <div class="flex flex-col items-center justify-center relative rounded-[2rem] gap-12 w-full h-[36rem] bg-black/20 inset-shadow-[0_4px_16px] inset-shadow-white/5">
+    <div class="w-full h-full absolute rounded-[2rem]">
+      <ColorBends
+        rotation={62}
+        speed={0.005}
+        colors={["#3B82F6","#133060","#133060","#000000"]}
+        transparent
+        autoRotate={0}
+        scale={0.6}
+        frequency={0.5}
+        warpStrength={1}
+        mouseInfluence={0.35}
+        parallax={0}
+        noise={0.85}
+        iterations={5}
+        intensity={1.5}
+        bandWidth={4}
+        className="w-full h-full absolute rounded-[2rem] opacity-80"
+        client:load
+      />
+    </div>
+    <div class="flex flex-col items-center text-center gap-2 font-heading font-medium">
+      <HeroRotating client:load />
+      <h1 class="text-4xl">is being built.</h1>
+    </div>
+    <div class="flex flex-col items-center font-medium">
+      <p>avoid your completely avoidable issues in your community.</p>
+      <p>who knows? the victim only want the <i>true reason</i>.</p>
+    </div>
+    <div class="flex gap-2">
+      <button class="z-10 bg-indigo-700/50 hover:bg-indigo-800 cursor-not-allowed py-1 px-3 transition duration-300" disabled>
+        invite
+      </button>
+      <button class="z-10 bg-indigo-700/50 hover:bg-indigo-800 cursor-not-allowed py-1 px-3 transition duration-300" disabled>
+        privacy
+      </button>
+    </div>
+  </div>
 </main>

@@ -5,5 +5,30 @@ import Hero from '../components/Hero.astro';
 ---
 
 <Layout>
-  <Hero />
+  <div class="border-foreground/10 border-b px-8">
+    <div class="mx-auto max-w-6xl py-4 flex justify-between">
+      <p>project-thanos</p>
+      <div class="flex gap-2 items-center">
+        <a href="/dashboard" class="hover:text-slate-400 transition duration-300">dashboard</a>
+        <a href="/status" class="hover:text-slate-400 transition duration-300">status</a>
+        <a href="/docs" class="hover:text-slate-400 transition duration-300">docs</a>
+      </div>
+    </div>
+  </div>
+  <section class="border-foreground/10 border-b px-8">
+    <div
+      class="-z-50 absolute top-0 right-0 left-0 mx-auto"
+      style={{ filter: "blur(clamp(200px, 10vw, 250px))" }}
+    >
+      <span
+        class="absolute top-0 right-0 left-0 m-0 mx-auto h-[25vh] bg-gradient-to-r w-[90vw] from-[#0019F5]/50 to-[#828AD1]/50 p-0 sm:h-[15vh] md:h-[10vh] dark:bg-[#091588]/80 md:w-[80vw]"
+        style={{
+          clipPath: "polygon(0% 51%, 50% 0%, 100% 51%, 100% 100%, 0% 100%)",
+        }}
+      />
+    </div>
+    <div class="mx-auto max-w-6xl py-4 relative">
+      <Hero />
+    </div>
+  </section>
 </Layout>
