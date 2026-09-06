@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 
 import cloudflare from "@astrojs/cloudflare";
 import react from "@astrojs/react";
@@ -14,4 +14,21 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+  fonts: [
+    {
+      provider: fontProviders.fontsource(),
+      name: "Valley Sans",
+      cssVariable: "--font-valley-sans-variable",
+    },
+    {
+      provider: fontProviders.fontsource(),
+      name: "DM Sans",
+      cssVariable: "--font-dm-sans-variable",
+    },
+    {
+      provider: fontProviders.fontsource(),
+      name: "Lora",
+      cssVariable: "--font-lora-variable",
+    },
+  ],
 });

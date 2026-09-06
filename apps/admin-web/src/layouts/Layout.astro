@@ -1,3 +1,7 @@
+---
+import { Font } from 'astro:assets';
+---
+
 <!doctype html>
 <html lang="en">
 	<head>
@@ -7,6 +11,9 @@
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Astro Basics</title>
+		<Font family="Valley Sans" cssVariable="--font-valley-sans-variable" />
+		<Font family="DM Sans" cssVariable="--font-dm-sans-variable" />
+		<Font family="Lora" cssVariable="--font-lora-variable" />
 	</head>
 	<body>
 		<slot />
