@@ -44,6 +44,12 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      exclude: ["@astrojs/svelte/server.js", "es2015"],
+    },
+    ssr: {
+      noExternal: ["@astrojs/svelte"],
+    },
   },
   fonts: [
     {
