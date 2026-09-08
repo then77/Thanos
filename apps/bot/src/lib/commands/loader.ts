@@ -2,13 +2,18 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   ApplicationCommandOptionType,
+  ApplicationCommandType,
   Collection,
+  SlashCommandSubcommandBuilder,
+  SlashCommandSubcommandGroupBuilder,
   type RESTPostAPIApplicationCommandsJSONBody,
 } from "discord.js";
+import { resolveAutocompleteChoices } from "./define";
 import type {
   ApplicationCommand,
   ApplicationSubcommand,
   ApplicationSubcommandGroup,
+  AutocompleteHandler,
   ChatInputApplicationCommand,
   CommandModule,
   ExecutableApplicationCommand,
@@ -55,7 +60,9 @@ export async function loadCommands(
       continue;
     }
 
-    subcommands.set(getSubcommandKey(filePath, command), command);
+    const key = getSubcommandKey(filePath, command);
+    validateAutocompleteConfiguration(key, command);
+    subcommands.set(key, command);
   }
 
   for (const { command } of loadedModules) {
@@ -69,6 +76,10 @@ export async function loadCommands(
       const executableCommand: ExecutableChatInputCommand = {
         data: command.data,
         execute: createSubcommandRouter(data.name, subcommands),
+        autocomplete: createSubcommandAutocompleteRouter(
+          data.name,
+          subcommands,
+        ),
       };
 
       commands.set(data.name, executableCommand);
@@ -77,6 +88,10 @@ export async function loadCommands(
     }
 
     if (isExecutableApplicationCommand(command)) {
+      if (isExecutableChatInputCommand(command)) {
+        validateAutocompleteConfiguration(data.name, command);
+      }
+
       commands.set(data.name, command);
       commandData.push(data);
     }
@@ -94,13 +109,13 @@ function resolveCommandsRoot(directory: CommandsDirectory): string {
 }
 
 function isSubcommand(command: CommandModule): command is ApplicationSubcommand {
-  return command.data.toJSON().type === ApplicationCommandOptionType.Subcommand;
+  return command.data instanceof SlashCommandSubcommandBuilder;
 }
 
 function isSubcommandGroup(
   command: CommandModule,
 ): command is ApplicationSubcommandGroup {
-  return command.data.toJSON().type === ApplicationCommandOptionType.SubcommandGroup;
+  return command.data instanceof SlashCommandSubcommandGroupBuilder;
 }
 
 function isSubcommandsOnlyCommand(
@@ -125,6 +140,14 @@ function isExecutableApplicationCommand(
   return "execute" in command;
 }
 
+function isExecutableChatInputCommand(
+  command: ExecutableApplicationCommand,
+): command is ExecutableChatInputCommand {
+  const type = command.data.toJSON().type;
+
+  return type === undefined || type === ApplicationCommandType.ChatInput;
+}
+
 function createSubcommandRouter(
   commandName: string,
   subcommands: Collection<string, ApplicationSubcommand>,
@@ -143,6 +166,85 @@ function createSubcommandRouter(
 
     await subcommand.execute(interaction);
   };
+}
+
+function createSubcommandAutocompleteRouter(
+  commandName: string,
+  subcommands: Collection<string, ApplicationSubcommand>,
+): AutocompleteHandler {
+  return async (context) => {
+    const groupName = context.interaction.options.getSubcommandGroup(false);
+    const subcommandName = context.interaction.options.getSubcommand();
+    const key = groupName
+      ? `${commandName}:${groupName}:${subcommandName}`
+      : `${commandName}:${subcommandName}`;
+    const subcommand = subcommands.get(key);
+
+    if (!subcommand?.autocomplete) {
+      throw new Error(`No autocomplete handler found for subcommand: ${key}`);
+    }
+
+    return await resolveAutocompleteChoices(subcommand.autocomplete, context);
+  };
+}
+
+function validateAutocompleteConfiguration(
+  commandKey: string,
+  command: ExecutableChatInputCommand | ApplicationSubcommand,
+): void {
+  const data = command.data.toJSON();
+  const autocompleteOptionNames = (data.options ?? [])
+    .filter(
+      (option) =>
+        "autocomplete" in option && option.autocomplete === true,
+    )
+    .map((option) => option.name);
+  const autocomplete = command.autocomplete;
+
+  if (autocompleteOptionNames.length === 0) {
+    if (autocomplete) {
+      throw new Error(
+        `Command "${commandKey}" defines autocomplete handlers but has no autocomplete-enabled options`,
+      );
+    }
+
+    return;
+  }
+
+  if (!autocomplete) {
+    throw new Error(
+      `Command "${commandKey}" has autocomplete-enabled options but no autocomplete handler`,
+    );
+  }
+
+  if (typeof autocomplete === "function") {
+    return;
+  }
+
+  const configuredOptionNames = Object.keys(autocomplete);
+  const missingOptionNames = autocompleteOptionNames.filter(
+    (name) => !configuredOptionNames.includes(name),
+  );
+  const unknownOptionNames = configuredOptionNames.filter(
+    (name) => !autocompleteOptionNames.includes(name),
+  );
+
+  if (missingOptionNames.length > 0 || unknownOptionNames.length > 0) {
+    const details = [
+      missingOptionNames.length > 0
+        ? `missing handlers for: ${missingOptionNames.join(", ")}`
+        : undefined,
+      unknownOptionNames.length > 0
+        ? `unknown handlers for: ${unknownOptionNames.join(", ")}`
+        : undefined,
+    ]
+      .filter(Boolean)
+      .join("; ");
+
+    throw new Error(
+      `Invalid autocomplete configuration for command "${commandKey}": ${details}`,
+    );
+  }
 }
 
 function getSubcommandKey(filePath: string, command: ApplicationSubcommand): string {

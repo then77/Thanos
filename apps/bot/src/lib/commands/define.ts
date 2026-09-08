@@ -1,5 +1,8 @@
 import type {
   ApplicationCommandType,
+  ApplicationCommandOptionChoiceData,
+  AutocompleteFocusedOption,
+  AutocompleteInteraction,
   ChatInputCommandInteraction,
   ContextMenuCommandBuilder,
   MessageContextMenuCommandInteraction,
@@ -20,6 +23,21 @@ export type ApplicationCommand =
 export type ChatInputCommandExecute = (
   interaction: ChatInputCommandInteraction,
 ) => Awaitable<void>;
+
+export interface AutocompleteContext {
+  interaction: AutocompleteInteraction;
+  focused: AutocompleteFocusedOption;
+}
+
+export type AutocompleteChoices = readonly ApplicationCommandOptionChoiceData[];
+
+export type AutocompleteHandler = (
+  context: AutocompleteContext,
+) => Awaitable<AutocompleteChoices>;
+
+export type CommandAutocomplete =
+  | AutocompleteHandler
+  | Readonly<Record<string, AutocompleteHandler>>;
 
 type UserCommandExecute = (
   interaction: UserContextMenuCommandInteraction,
@@ -43,6 +61,7 @@ export type ChatInputApplicationCommand =
   | {
       data: SlashCommandData;
       execute: ChatInputCommandExecute;
+      autocomplete?: CommandAutocomplete;
     }
   | {
       data: SubcommandsOnlyCommandData;
@@ -52,6 +71,7 @@ export type ChatInputApplicationCommand =
 export interface ApplicationSubcommand {
   data: SlashCommandSubcommandBuilder;
   execute: ChatInputCommandExecute;
+  autocomplete?: CommandAutocomplete;
 }
 
 export interface ApplicationSubcommandGroup {
@@ -121,5 +141,18 @@ export function subcommandToCommand(
       toJSON: () => data,
     },
     execute: subcommand.execute,
+    autocomplete: subcommand.autocomplete,
   });
+}
+
+export async function resolveAutocompleteChoices(
+  autocomplete: CommandAutocomplete,
+  context: AutocompleteContext,
+): Promise<AutocompleteChoices> {
+  const handler =
+    typeof autocomplete === "function"
+      ? autocomplete
+      : autocomplete[context.focused.name];
+
+  return handler ? await handler(context) : [];
 }
