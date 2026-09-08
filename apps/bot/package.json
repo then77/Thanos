@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "bun --env-file=../../.env run --bun --hot ./src/index.ts",
-    "reset-global-commands": "bun --env-file=../../.env run --bun ./src/scripts/reset-global-commands.ts"
+    "reset-commands": "bun --env-file=../../.env run --bun ./src/scripts/reset-commands.ts",
+    "sync-commands": "bun --env-file=../../.env run --bun ./src/scripts/sync-commands.ts"
   },
   "dependencies": {
     "@hono/standard-validator": "^0.4.0",
