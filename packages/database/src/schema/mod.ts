@@ -52,7 +52,7 @@ export const actions = pgTable(
 
     // TODO: link this ref to either user on better-auth or discord user
     createdBy: uuid("created_by").notNull(),
-    dismissedBy: uuid("dismissed_by").notNull(),
+    dismissedBy: uuid("dismissed_by"),
 
     expiresAt: timestamp("expires_at"),
     dismissedAt: timestamp("dismissed_at"),
