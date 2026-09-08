@@ -1,7 +1,7 @@
 ---
-import "../styles/global.css";
-import Layout from '../layouts/layout.astro';
-import Hero from '../components/hero.astro';
+import "@/styles/global.css";
+import Layout from '@/layouts/layout.astro';
+import Hero from '@/components/Hero.astro';
 ---
 
 <Layout>
@@ -21,7 +21,7 @@ import Hero from '../components/hero.astro';
       style={{ filter: "blur(clamp(200px, 10vw, 250px))" }}
     >
       <span
-        class="absolute top-0 right-0 left-0 m-0 mx-auto h-[25vh] bg-gradient-to-r w-[90vw] from-[#0019F5]/50 to-[#828AD1]/50 p-0 sm:h-[15vh] md:h-[10vh] dark:bg-[#091588]/80 md:w-[80vw]"
+        class="absolute top-0 right-0 left-0 m-0 mx-auto h-[25vh] bg-linear-to-r w-[90vw] from-[#0019F5]/50 to-[#828AD1]/50 p-0 sm:h-[15vh] md:h-[10vh] dark:bg-[#091588]/80 md:w-[80vw]"
         style={{
           clipPath: "polygon(0% 51%, 50% 0%, 100% 51%, 100% 100%, 0% 100%)",
         }}
