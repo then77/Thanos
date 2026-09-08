@@ -1,3 +1,5 @@
+// Created by better-auth. Do not modify existing
+
 import { defineRelationsPart } from "drizzle-orm";
 import {
   pgTable,
