@@ -5,6 +5,7 @@ import type {
   AutocompleteInteraction,
   ChatInputCommandInteraction,
   ContextMenuCommandBuilder,
+  InteractionContextType,
   MessageContextMenuCommandInteraction,
   SlashCommandBuilder,
   SlashCommandSubcommandBuilder,
@@ -131,10 +132,33 @@ export function defineCommand(command: CommandModule): CommandModule {
   return command;
 }
 
+interface SubcommandToCommandOptions {
+  contexts?: readonly InteractionContextType[];
+  shortHand?: string;
+}
+
 export function subcommandToCommand(
   subcommand: ApplicationSubcommand,
+  options: SubcommandToCommandOptions = {},
 ): ExecutableChatInputCommand {
-  const { type: _type, ...data } = subcommand.data.toJSON();
+  const { type: _type, ...subcommandData } = subcommand.data.toJSON();
+  const data = {
+    ...subcommandData,
+    ...(options.contexts ? { contexts: [...options.contexts] } : {}),
+  };
+
+  if (options.shortHand) {
+    const description = data.description.trimEnd();
+    const prefix = description
+      ? `${description}${description.endsWith(".") ? "" : "."} `
+      : "";
+
+    data.description = `${prefix}Shorthand of ${options.shortHand}`;
+
+    if (data.description.length > 100) {
+      throw new RangeError("Converted command description exceeds 100 characters.");
+    }
+  }
 
   return defineCommand({
     data: {

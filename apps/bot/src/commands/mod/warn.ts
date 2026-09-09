@@ -2,10 +2,17 @@ import { SlashCommandSubcommandBuilder } from "discord.js";
 import { defineCommand } from "@/lib/commands";
 
 import { db } from "@thanos/database";
-import { discordUsers, actions, type NewAction } from "@thanos/database/schema";
-import { getOrInitDiscordUser } from "@/lib/utils/db";
+import {
+  discordUsers,
+  actions,
+  actionEvidences,
+  type NewAction,
+  type NewActionEvidence,
+  type ActionEvidence,
+} from "@thanos/database/schema";
 import { eq } from "drizzle-orm";
 
+import { getOrInitDiscordUser } from "@/lib/utils/db";
 import { resolveMessageEvidence } from "@/lib/utils/message";
 import { generateStringId } from "@/lib/utils/generate";
 
@@ -70,8 +77,6 @@ export default defineCommand({
     reason: async ({ focused }) => findPresetChoices(focused.value),
   },
   execute: async (interaction) => {
-    const author = interaction.user;
-
     const user = interaction.options.getUser("user", true);
     const reason = interaction.options.getString("reason", true);
     const selectedPreset = reason.startsWith("preset:")
@@ -82,8 +87,20 @@ export default defineCommand({
     const rawMessageEvidence = interaction.options.getString("message");
 
     let rawImageEvidence = interaction.options.getAttachment("image");
-    if (rawImageEvidence && !rawImageEvidence.contentType?.startsWith("image/")) {
+    if (
+      rawImageEvidence &&
+      !rawImageEvidence.contentType?.startsWith("image/")
+    ) {
       rawImageEvidence = null;
+    }
+
+    if (user.bot) {
+      await interaction.reply({
+        content: user.id == interaction.client.user.id
+          ? "You can't warn me! >:("
+          : "You can't warn a bot.",
+      });
+      return;
     }
 
     // Defer reply
@@ -94,15 +111,17 @@ export default defineCommand({
       throw new Error("Unable to process as discord user data cant be found.");
     }
 
-    // TODO: Decide to use discord user or auth user
-    const authorUser = author;
+    const authorUser = await getOrInitDiscordUser(interaction.user);
+    if (!authorUser) {
+      throw new Error("Unable to process as author user data cant be found.");
+    }
 
     const messageEvidence = rawMessageEvidence
       ? await resolveMessageEvidence(interaction, rawMessageEvidence)
       : null;
 
     // TODO: Integrate s3 or smth for evidence image
-    
+
     const actionValue: NewAction = {
       caseId: generateStringId(8),
       discordId: discordUser.id,
@@ -112,16 +131,23 @@ export default defineCommand({
       meritPenalty: points,
       afterMerit: discordUser.merit - points,
 
-      evidenceId: messageEvidence?.id ?? null,
-      evidenceContent: messageEvidence?.content ?? null,
-
-      // TODO: still random
-      createdBy: "77a591be-5261-423f-b93d-61282bc8dfb3",
+      createdBy: authorUser.id,
     };
 
     const [action] = await db.insert(actions).values(actionValue).returning();
     if (!action) {
       throw new Error("Failed to create action case.");
+    }
+
+    let actionEvidence: ActionEvidence | undefined;
+    if (messageEvidence?.id || messageEvidence?.content) {
+      const actionEvidenceValue: NewActionEvidence = {
+        actionId: action.id,
+        messageId: messageEvidence.id,
+        messageContent: messageEvidence.content,
+        createdBy: authorUser.id
+      };
+      [actionEvidence] = await db.insert(actionEvidences).values(actionEvidenceValue).returning();
     }
 
     // Do not use await here pls
@@ -130,7 +156,7 @@ export default defineCommand({
         .update(discordUsers)
         .set({ merit: discordUser.merit - points })
         .where(eq(discordUsers.id, discordUser.id)),
-      
+
       // TODO: proper message.
       user.send({
         content:
