@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun --env-file=../../.env run --bun --hot ./src/index.ts",
+    "dev": "bun --env-file=../../.env run --bun --watch ./src/index.ts",
     "reset-commands": "bun --env-file=../../.env run --bun ./src/scripts/reset-commands.ts",
     "sync-commands": "bun --env-file=../../.env run --bun ./src/scripts/sync-commands.ts"
   },

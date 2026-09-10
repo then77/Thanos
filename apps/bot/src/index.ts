@@ -30,6 +30,15 @@ process.on("unhandledRejection", (reason) => {
   }
 });
 
+/** Add handling on shutdown */
+async function shutdown() {
+  console.log("Shutting down...");
+  client.destroy();
+  process.exit(0);
+}
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
+
 if (!env.DISCORD_TOKEN) {
   throw new Error("DISCORD_TOKEN is not set yet.");
 }

@@ -99,6 +99,7 @@ export default defineCommand({
         content: user.id == interaction.client.user.id
           ? "You can't warn me! >:("
           : "You can't warn a bot.",
+        ephemeral: true,
       });
       return;
     }
